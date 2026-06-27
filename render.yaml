@@ -1,0 +1,29 @@
+services:
+  # 1. Food Service (Private Service - Chỉ chạy nội bộ)
+  - type: pserv
+    name: food-service
+    env: docker
+    dockerfilePath: ./food-service/Dockerfile
+    autoDeploy: true
+
+  # 2. Nutrition Service (Private Service - Chỉ chạy nội bộ)
+  - type: pserv
+    name: nutrition-service
+    env: docker
+    dockerfilePath: ./nutrition-service/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: USDA_API_KEY
+        sync: false # Báo Render rằng API Key sẽ được nhập thủ công trên Dashboard bảo mật
+
+  # 3. Gateway Service (Web Service - Công khai ra ngoài)
+  - type: web
+    name: nutrition-gateway
+    env: docker
+    dockerfilePath: ./gateway/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: FOOD_SERVICE_URL
+        value: http://food-service:8001
+      - key: NUTRITION_SERVICE_URL
+        value: http://nutrition-service:8002

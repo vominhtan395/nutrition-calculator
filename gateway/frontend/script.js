@@ -1,9 +1,11 @@
 /**
  * Nutrition Calculator – script.js (PRODUCTION REFACTOR)
- * Microservices via API Gateway: http://localhost:8000
+ * Microservices via API Gateway - Dynamic Routing
  */
 
-const API_BASE = 'http://localhost:8000';
+// SỬ DỤNG RELATIVE PATH THAY VÌ HARDCODE LOCALHOST
+// Khi deploy lên cloud, trình duyệt sẽ tự ghép domain hiện tại (VD: https://app.onrender.com/api/...)
+const API_BASE = '';
 
 const CATEGORY_EMOJI = {
   'fruit': '🍎',
@@ -124,7 +126,6 @@ function renderResult(foodData, nutritionData) {
   const { displayName, category } = foodData;
   const { calories, protein, fat, carbohydrates, weight } = nutritionData;
 
-  // Thêm watermark USDA để chuyên nghiệp
   document.getElementById('result-food-name').textContent =
     `${categoryEmoji(category)} ${displayName} · ${weight}g (Nguồn: USDA)`;
 

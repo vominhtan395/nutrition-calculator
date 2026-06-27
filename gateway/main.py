@@ -1,5 +1,7 @@
+import os
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import httpx
 
 app = FastAPI(title="API Gateway", version="2.0")
@@ -12,13 +14,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-FOOD_SERVICE = "http://food-service:8001"
-NUTRITION_SERVICE = "http://nutrition-service:8002"
-TIMEOUT = 15.0  # Tăng timeout vì gọi USDA có thể chậm
+# Đọc URL nội bộ từ biến môi trường (Linh hoạt cho Local và Render)
+FOOD_SERVICE = os.getenv("FOOD_SERVICE_URL", "http://food-service:8001")
+NUTRITION_SERVICE = os.getenv("NUTRITION_SERVICE_URL", "http://nutrition-service:8002")
+TIMEOUT = 15.0
 
-@app.get("/")
-def home():
-    return {"service": "API Gateway", "status": "running"}
+# ───────────────────────── API ROUTES (PHẢI KHAI BÁO TRƯỚC STATIC FILES) ─────────────────────────
 
 @app.get("/api/foods/search")
 async def search_food(name: str, response: Response):
@@ -28,7 +29,7 @@ async def search_food(name: str, response: Response):
             response.status_code = res.status_code
             return res.json()
         except httpx.RequestError as e:
-            raise HTTPException(status_code=503, detail=f"Food Service Error: {str(e)}")
+            raise HTTPException(status_code=503, detail=f"Food Service Unavailable: {str(e)}")
 
 @app.get("/api/foods/popular")
 async def popular_foods(response: Response):
@@ -38,7 +39,7 @@ async def popular_foods(response: Response):
             response.status_code = res.status_code
             return res.json()
         except httpx.RequestError as e:
-            raise HTTPException(status_code=503, detail=f"Food Service Error: {str(e)}")
+            raise HTTPException(status_code=503, detail=f"Food Service Unavailable: {str(e)}")
 
 @app.get("/api/nutrition")
 async def nutrition(food: str, weight: float, response: Response):
@@ -51,4 +52,12 @@ async def nutrition(food: str, weight: float, response: Response):
             response.status_code = res.status_code
             return res.json()
         except httpx.RequestError as e:
-            raise HTTPException(status_code=503, detail=f"Nutrition Service Error: {str(e)}")
+            raise HTTPException(status_code=503, detail=f"Nutrition Service Unavailable: {str(e)}")
+
+# ───────────────────────── SERVE FRONTEND (STATIC FILES) ─────────────────────────
+# Định vị thư mục frontend (Nằm cùng cấp với main.py)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+
+# Mount toàn bộ nội dung thư mục frontend. html=True để tự động phục vụ index.html tại route "/"
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
