@@ -15,8 +15,8 @@ app.add_middleware(
 )
 
 # Đọc URL nội bộ từ biến môi trường (Linh hoạt cho Local và Render)
-FOOD_SERVICE = os.getenv("FOOD_SERVICE_URL", "http://food-service:8001")
-NUTRITION_SERVICE = os.getenv("NUTRITION_SERVICE_URL", "http://nutrition-service:8002")
+FOOD_SERVICE = os.getenv("FOOD_SERVICE_URL", "https://food-service-pzpi.onrender.com")
+NUTRITION_SERVICE = os.getenv("NUTRITION_SERVICE_URL", "https://nutrition-service-pzpi.onrender.com")
 TIMEOUT = 15.0
 
 # ───────────────────────── API ROUTES (PHẢI KHAI BÁO TRƯỚC STATIC FILES) ─────────────────────────
