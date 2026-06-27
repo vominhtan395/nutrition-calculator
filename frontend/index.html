@@ -11,7 +11,6 @@
 </head>
 <body>
 
-  <!-- HEADER -->
   <header class="site-header">
     <div class="header-inner">
       <div class="logo">
@@ -21,13 +20,11 @@
           <p class="site-subtitle">Hệ thống tra cứu dinh dưỡng thực phẩm</p>
         </div>
       </div>
-      <div class="header-badge">Microservices Demo</div>
     </div>
   </header>
 
   <main class="main-content">
 
-    <!-- SEARCH SECTION -->
     <section class="search-section">
       <div class="section-label">Tra cứu dinh dưỡng</div>
       <h2 class="section-title">Bạn đang ăn gì hôm nay?</h2>
@@ -73,13 +70,11 @@
       </div>
     </section>
 
-    <!-- RESULT SECTION -->
     <section class="result-section" id="result-section" hidden>
       <div class="section-label">Kết quả</div>
       <h2 class="section-title" id="result-food-name">—</h2>
 
       <div class="result-layout">
-        <!-- Ring chart -->
         <div class="ring-wrap">
           <svg class="ring-svg" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
             <circle class="ring-bg" cx="90" cy="90" r="70" />
@@ -93,7 +88,6 @@
           </div>
         </div>
 
-        <!-- Macro cards -->
         <div class="macro-grid">
           <div class="macro-card macro-protein">
             <div class="macro-dot"></div>
@@ -122,7 +116,6 @@
         </div>
       </div>
 
-      <!-- Legend -->
       <div class="legend">
         <div class="legend-item"><span class="legend-dot protein-dot"></span>Protein</div>
         <div class="legend-item"><span class="legend-dot fat-dot"></span>Chất béo</div>
@@ -130,29 +123,22 @@
       </div>
     </section>
 
-    <!-- POPULAR FOODS SECTION -->
     <section class="popular-section">
       <div class="section-label">Khám phá</div>
       <h2 class="section-title">Món ăn phổ biến</h2>
       <p class="section-desc">Nhấn vào một món để tra cứu nhanh dinh dưỡng</p>
       <div class="popular-grid" id="popular-grid">
-        <!-- cards injected by JS -->
-      </div>
+        </div>
     </section>
 
   </main>
 
-  <!-- LOADING OVERLAY -->
   <div class="loading-overlay" id="loading-overlay" hidden>
     <div class="spinner-wrap">
       <div class="spinner"></div>
       <p class="loading-text" id="loading-text">Đang tìm kiếm...</p>
     </div>
   </div>
-
-  <footer class="site-footer">
-    <p>Nutrition Calculator · Microservices Architecture · Food Service :8001 · Nutrition Service :8002</p>
-  </footer>
 
   <script src="script.js"></script>
 </body>

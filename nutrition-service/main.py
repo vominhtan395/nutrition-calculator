@@ -1,12 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from cachetools import TTLCache
+import usda_client
 
-app = FastAPI(
-    title="Nutrition Service",
-    version="1.0"
-)
+app = FastAPI(title="Nutrition Service", version="2.0")
 
-# ================= CORS =================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,75 +13,49 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ================= NUTRITION DATA =================
-nutrition_db = {
-    "apple": {
-        "calories": 52,
-        "protein": 0.3,
-        "fat": 0.2,
-        "carbohydrates": 14
-    },
-    "banana": {
-        "calories": 89,
-        "protein": 1.1,
-        "fat": 0.3,
-        "carbohydrates": 23
-    },
-    "rice": {
-        "calories": 130,
-        "protein": 2.4,
-        "fat": 0.2,
-        "carbohydrates": 28
-    },
-    "beef pho": {
-        "calories": 120,
-        "protein": 8,
-        "fat": 3,
-        "carbohydrates": 15
-    },
-    "pizza": {
-        "calories": 266,
-        "protein": 11,
-        "fat": 10,
-        "carbohydrates": 33
-    },
-    "egg": {
-        "calories": 155,
-        "protein": 13,
-        "fat": 11,
-        "carbohydrates": 1.1
-    }
-}
+# YÊU CẦU 14: Tối ưu - Cache kết quả USDA (Lưu tối đa 1000 món, tồn tại trong 24 tiếng)
+cache = TTLCache(maxsize=1000, ttl=86400)
 
-# ================= ROOT =================
 @app.get("/")
 def home():
-    return {
-        "service": "Nutrition Service",
-        "status": "running"
-    }
+    return {"service": "Nutrition Service", "status": "running", "source": "USDA API"}
 
-# ================= MAIN API =================
 @app.get("/nutrition")
-def get_nutrition(food: str, weight: float):
+async def get_nutrition(food: str, weight: float):
+    query_key = food.strip().lower()
 
-    key = food.strip().lower()
+    # Kiểm tra Cache trước
+    if query_key in cache:
+        base_nutrients = cache[query_key]
+    else:
+        # Gọi USDA nếu chưa có trong cache
+        try:
+            base_nutrients = await usda_client.fetch_nutrition_from_usda(query_key)
+            if not base_nutrients:
+                # YÊU CẦU 5: Fallback cắt bỏ các từ phụ để thử lại
+                fallback_query = query_key.split()[0] # Chỉ lấy từ đầu tiên
+                if fallback_query != query_key:
+                    base_nutrients = await usda_client.fetch_nutrition_from_usda(fallback_query)
 
-    if key not in nutrition_db:
-        raise HTTPException(
-            status_code=404,
-            detail="Nutrition data not found"
-        )
+            if not base_nutrients:
+                raise HTTPException(status_code=404, detail="Không tìm thấy dữ liệu dinh dưỡng từ USDA.")
+            
+            # Lưu vào cache
+            cache[query_key] = base_nutrients
 
-    base = nutrition_db[key]
+        except Exception as e:
+            # Xử lý lỗi Timeout, 429...
+            raise HTTPException(status_code=500, detail=str(e))
 
-    factor = weight / 100
+    # Tính toán theo khối lượng người dùng nhập (base_nutrients là /100g)
+    factor = weight / 100.0
 
     return {
         "food": food,
         "weight": weight,
-        "calories": round(base["calories"] * factor, 2),
-        "protein": round(base["protein"] * factor, 2),
-        "fat": round(base["fat"] * factor, 2),
-        "carbohydrates": round(base["carbohydrates"] * factor, 2)
+        "calories": round(base_nutrients["calories"] * factor, 2),
+        "protein": round(base_nutrients["protein"] * factor, 2),
+        "fat": round(base_nutrients["fat"] * factor, 2),
+        "carbohydrates": round(base_nutrients["carbohydrates"] * factor, 2),
+        "source": "USDA FoodData Central"
     }

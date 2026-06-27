@@ -1,11 +1,10 @@
 /**
- * Nutrition Calculator – script.js (GATEWAY VERSION - FIXED)
+ * Nutrition Calculator – script.js (PRODUCTION REFACTOR)
  * Microservices via API Gateway: http://localhost:8000
  */
 
 const API_BASE = 'http://localhost:8000';
 
-// ─── CATEGORY EMOJI ─────────────────────────────────────────────
 const CATEGORY_EMOJI = {
   'fruit': '🍎',
   'vegetable': '🥦',
@@ -33,7 +32,6 @@ function categoryEmoji(cat = '') {
   return CATEGORY_EMOJI[String(cat).toLowerCase()] || '🥗';
 }
 
-// ─── DOM ─────────────────────────────────────────────
 const foodInput = document.getElementById('food-input');
 const weightInput = document.getElementById('weight-input');
 const errorBox = document.getElementById('error-box');
@@ -43,7 +41,6 @@ const popularGrid = document.getElementById('popular-grid');
 const loadingOverlay = document.getElementById('loading-overlay');
 const loadingText = document.getElementById('loading-text');
 
-// ─── LOADING ─────────────────────────────────────────────
 function showLoading(msg = 'Đang xử lý...') {
   loadingText.textContent = msg;
   loadingOverlay.hidden = false;
@@ -53,7 +50,6 @@ function hideLoading() {
   loadingOverlay.hidden = true;
 }
 
-// ─── ERROR ─────────────────────────────────────────────
 function showError(msg) {
   errorMessage.textContent = msg;
   errorBox.hidden = false;
@@ -64,7 +60,6 @@ function clearError() {
   errorBox.hidden = true;
 }
 
-// ─── SEARCH ─────────────────────────────────────────────
 async function handleSearch(prefillFood = null, prefillWeight = null) {
   const foodName = (prefillFood ?? foodInput.value).trim();
   const weight = parseInt(prefillWeight ?? weightInput.value, 10);
@@ -76,19 +71,18 @@ async function handleSearch(prefillFood = null, prefillWeight = null) {
   resultSection.hidden = true;
 
   try {
-    showLoading('Đang tìm món ăn...');
+    showLoading('Đang phân tích món ăn (Fuzzy Search)...');
 
     const foodData = await searchFood(foodName);
-    // Nếu API trả về null (do HTTP 404), tiến hành hiển thị lỗi thân thiện
-    if (!foodData || foodData.error || !foodData.query) {
-      return showError('Không tìm thấy món ăn trong hệ thống.');
+    if (foodData.error) {
+        return showError(foodData.detail || 'Không có món ăn này trong từ điển.');
     }
 
-    showLoading('Đang tính dinh dưỡng...');
+    showLoading('Đang tải dữ liệu từ USDA FoodData Central...');
 
     const nutritionData = await getNutrition(foodData.query, weight);
-    if (!nutritionData || nutritionData.error) {
-      return showError('Không lấy được dữ liệu dinh dưỡng.');
+    if (nutritionData.error) {
+        return showError(nutritionData.detail || 'USDA: Không tìm thấy dữ liệu dinh dưỡng.');
     }
 
     renderResult(foodData, nutritionData);
@@ -96,29 +90,28 @@ async function handleSearch(prefillFood = null, prefillWeight = null) {
 
   } catch (err) {
     console.error(err);
-    showError('Lỗi Gateway hoặc Service hiện đang không phản hồi.');
+    showError('Lỗi Server: Không thể kết nối tới API Gateway hoặc Timeout.');
   } finally {
     hideLoading();
   }
 }
 
-// ─── API ─────────────────────────────────────────────
 async function searchFood(keyword) {
   const res = await fetch(
     `${API_BASE}/api/foods/search?name=${encodeURIComponent(keyword)}`
   );
-  if (res.status === 404) return { error: true };
-  if (!res.ok) throw new Error('Food API error');
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) return { error: true, detail: data.detail };
+  return data;
 }
 
 async function getNutrition(food, weight) {
   const res = await fetch(
     `${API_BASE}/api/nutrition?food=${encodeURIComponent(food)}&weight=${weight}`
   );
-  if (res.status === 404) return { error: true };
-  if (!res.ok) throw new Error('Nutrition API error');
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) return { error: true, detail: data.detail };
+  return data;
 }
 
 async function fetchPopularFoods() {
@@ -127,13 +120,13 @@ async function fetchPopularFoods() {
   return res.json();
 }
 
-// ─── RENDER ─────────────────────────────────────────────
 function renderResult(foodData, nutritionData) {
   const { displayName, category } = foodData;
   const { calories, protein, fat, carbohydrates, weight } = nutritionData;
 
+  // Thêm watermark USDA để chuyên nghiệp
   document.getElementById('result-food-name').textContent =
-    `${categoryEmoji(category)} ${displayName} · ${weight}g`;
+    `${categoryEmoji(category)} ${displayName} · ${weight}g (Nguồn: USDA)`;
 
   document.getElementById('ring-cal').textContent = Math.round(calories || 0);
   document.getElementById('macro-protein').textContent = (protein || 0).toFixed(1);
@@ -142,21 +135,18 @@ function renderResult(foodData, nutritionData) {
   document.getElementById('macro-weight').textContent = weight;
 
   drawRing(protein || 0, fat || 0, carbohydrates || 0);
-
   resultSection.hidden = false;
 }
 
-// ─── RING ─────────────────────────────────────────────
 function drawRing(protein, fat, carb) {
   const R = 70;
   const C = 2 * Math.PI * R;
   const GAP = 6;
-
   const total = protein + fat + carb;
+  
   if (total <= 0) return;
 
   const scale = v => ((v / total) * (C - 3 * GAP));
-
   const p = scale(protein);
   const f = scale(fat);
   const c = scale(carb);
@@ -169,16 +159,13 @@ function drawRing(protein, fat, carb) {
 function setRing(id, len, offset, C) {
   const el = document.getElementById(id);
   if (!el) return;
-
   el.style.strokeDasharray = `${len} ${C - len}`;
   el.style.strokeDashoffset = -offset;
 }
 
-// ─── POPULAR ─────────────────────────────────────────────
 async function loadPopularFoods() {
   try {
     const foods = await fetchPopularFoods();
-
     popularGrid.innerHTML = foods.map((f, i) => `
       <div class="popular-card"
         style="animation-delay:${i * 50}ms"
@@ -189,9 +176,8 @@ async function loadPopularFoods() {
         <span class="popular-category">${escapeHtml(f.category)}</span>
       </div>
     `).join('');
-
   } catch (e) {
-    popularGrid.innerHTML = `<p>Lỗi tải dữ liệu</p>`;
+    popularGrid.innerHTML = `<p>Lỗi tải dữ liệu phổ biến</p>`;
   }
 }
 
@@ -201,7 +187,6 @@ function quickLookup(name, query) {
   setTimeout(() => handleSearch(), 200);
 }
 
-// ─── ESCAPE HTML (FIX SECURITY BUG) ─────────────────────
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -211,7 +196,6 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-// ─── ENTER SUPPORT ─────────────────────────────────────
 foodInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') handleSearch();
 });
@@ -220,7 +204,6 @@ weightInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') handleSearch();
 });
 
-// ─── INIT ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadPopularFoods();
 });
