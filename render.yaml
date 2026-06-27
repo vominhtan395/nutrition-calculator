@@ -1,29 +1,32 @@
 services:
-  # 1. Food Service (Web Service)
+  # 1. Food Service
   - type: web
     name: food-service
     env: docker
     plan: free
-    dockerfilePath: ./food-service/Dockerfile
+    rootDir: food-service
+    dockerfilePath: ./Dockerfile
     autoDeploy: true
 
-  # 2. Nutrition Service (Web Service)
+  # 2. Nutrition Service
   - type: web
     name: nutrition-service
     env: docker
     plan: free
-    dockerfilePath: ./nutrition-service/Dockerfile
+    rootDir: nutrition-service
+    dockerfilePath: ./Dockerfile
     autoDeploy: true
     envVars:
       - key: USDA_API_KEY
-        sync: false # Nhập tay key trên Dashboard Render sau khi tạo
+        sync: false
 
-  # 3. Gateway Service (Web Service)
+  # 3. Gateway Service
   - type: web
     name: nutrition-gateway
     env: docker
     plan: free
-    dockerfilePath: ./gateway/Dockerfile
+    rootDir: gateway
+    dockerfilePath: ./Dockerfile
     autoDeploy: true
     envVars:
       - key: FOOD_SERVICE_URL
