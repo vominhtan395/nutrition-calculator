@@ -1,0 +1,32 @@
+services:
+  # 1. Food Service (Web Service)
+  - type: web
+    name: food-service
+    env: docker
+    plan: free
+    dockerfilePath: ./food-service/Dockerfile
+    autoDeploy: true
+
+  # 2. Nutrition Service (Web Service)
+  - type: web
+    name: nutrition-service
+    env: docker
+    plan: free
+    dockerfilePath: ./nutrition-service/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: USDA_API_KEY
+        sync: false # Nhập tay key trên Dashboard Render sau khi tạo
+
+  # 3. Gateway Service (Web Service)
+  - type: web
+    name: nutrition-gateway
+    env: docker
+    plan: free
+    dockerfilePath: ./gateway/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: FOOD_SERVICE_URL
+        value: https://food-service.onrender.com
+      - key: NUTRITION_SERVICE_URL
+        value: https://nutrition-service.onrender.com
