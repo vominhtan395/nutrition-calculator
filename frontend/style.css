@@ -40,6 +40,11 @@
 
 html { scroll-behavior: smooth; }
 
+/* Bắt buộc ẩn các element có thuộc tính hidden, ghi đè display: flex */
+[hidden] {
+  display: none !important;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background: var(--green-pale);

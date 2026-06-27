@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 
@@ -25,26 +25,38 @@ def home():
 # ───────────────────────── FOOD ROUTES ─────────────────────────
 
 @app.get("/api/foods/search")
-async def search_food(name: str):
+async def search_food(name: str, response: Response):
     async with httpx.AsyncClient() as client:
-        res = await client.get(f"{FOOD_SERVICE}/foods/search", params={"name": name})
-        return res.json()
+        try:
+            res = await client.get(f"{FOOD_SERVICE}/foods/search", params={"name": name})
+            response.status_code = res.status_code  # Proxy đúng status code về frontend
+            return res.json()
+        except httpx.RequestError as e:
+            raise HTTPException(status_code=503, detail=f"Food Service Unavailable: {str(e)}")
 
 
 @app.get("/api/foods/popular")
-async def popular_foods():
+async def popular_foods(response: Response):
     async with httpx.AsyncClient() as client:
-        res = await client.get(f"{FOOD_SERVICE}/foods/popular")
-        return res.json()
+        try:
+            res = await client.get(f"{FOOD_SERVICE}/foods/popular")
+            response.status_code = res.status_code
+            return res.json()
+        except httpx.RequestError as e:
+            raise HTTPException(status_code=503, detail=f"Food Service Unavailable: {str(e)}")
 
 
 # ───────────────────────── NUTRITION ROUTES ─────────────────────────
 
 @app.get("/api/nutrition")
-async def nutrition(food: str, weight: float):
+async def nutrition(food: str, weight: float, response: Response):
     async with httpx.AsyncClient() as client:
-        res = await client.get(
-            f"{NUTRITION_SERVICE}/nutrition",
-            params={"food": food, "weight": weight}
-        )
-        return res.json()
+        try:
+            res = await client.get(
+                f"{NUTRITION_SERVICE}/nutrition",
+                params={"food": food, "weight": weight}
+            )
+            response.status_code = res.status_code
+            return res.json()
+        except httpx.RequestError as e:
+            raise HTTPException(status_code=503, detail=f"Nutrition Service Unavailable: {str(e)}")

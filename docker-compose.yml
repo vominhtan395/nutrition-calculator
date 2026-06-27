@@ -6,13 +6,26 @@ services:
     depends_on:
       - food-service
       - nutrition-service
+    restart: unless-stopped
+    networks:
+      - microservices-net
 
   food-service:
     build: ./food-service
     ports:
       - "8001:8001"
+    restart: unless-stopped
+    networks:
+      - microservices-net
 
   nutrition-service:
     build: ./nutrition-service
     ports:
       - "8002:8002"
+    restart: unless-stopped
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge

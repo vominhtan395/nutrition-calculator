@@ -22,7 +22,11 @@ const CATEGORY_EMOJI = {
   'egg': '🥚',
   'soup': '🍲',
   'noodle': '🍝',
-  'rice': '🍚'
+  'rice': '🍚',
+  'fast food': '🍔',
+  'protein': '🍖',
+  'drink': '🥤',
+  'staple food': '🍚'
 };
 
 function categoryEmoji(cat = '') {
@@ -75,14 +79,15 @@ async function handleSearch(prefillFood = null, prefillWeight = null) {
     showLoading('Đang tìm món ăn...');
 
     const foodData = await searchFood(foodName);
-    if (!foodData?.query) {
-      return showError('Không tìm thấy món ăn.');
+    // Nếu API trả về null (do HTTP 404), tiến hành hiển thị lỗi thân thiện
+    if (!foodData || foodData.error || !foodData.query) {
+      return showError('Không tìm thấy món ăn trong hệ thống.');
     }
 
     showLoading('Đang tính dinh dưỡng...');
 
     const nutritionData = await getNutrition(foodData.query, weight);
-    if (!nutritionData) {
+    if (!nutritionData || nutritionData.error) {
       return showError('Không lấy được dữ liệu dinh dưỡng.');
     }
 
@@ -91,7 +96,7 @@ async function handleSearch(prefillFood = null, prefillWeight = null) {
 
   } catch (err) {
     console.error(err);
-    showError('Lỗi Gateway hoặc Service không chạy.');
+    showError('Lỗi Gateway hoặc Service hiện đang không phản hồi.');
   } finally {
     hideLoading();
   }
@@ -102,6 +107,7 @@ async function searchFood(keyword) {
   const res = await fetch(
     `${API_BASE}/api/foods/search?name=${encodeURIComponent(keyword)}`
   );
+  if (res.status === 404) return { error: true };
   if (!res.ok) throw new Error('Food API error');
   return res.json();
 }
@@ -110,6 +116,7 @@ async function getNutrition(food, weight) {
   const res = await fetch(
     `${API_BASE}/api/nutrition?food=${encodeURIComponent(food)}&weight=${weight}`
   );
+  if (res.status === 404) return { error: true };
   if (!res.ok) throw new Error('Nutrition API error');
   return res.json();
 }
