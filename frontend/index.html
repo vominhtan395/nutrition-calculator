@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nutrition Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🥗</span>
+        <div>
+          <h1 class="site-title">Nutrition Calculator</h1>
+          <p class="site-subtitle">Hệ thống tra cứu dinh dưỡng thực phẩm</p>
+        </div>
+      </div>
+      <div class="header-badge">Microservices Demo</div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- SEARCH SECTION -->
+    <section class="search-section">
+      <div class="section-label">Tra cứu dinh dưỡng</div>
+      <h2 class="section-title">Bạn đang ăn gì hôm nay?</h2>
+      <p class="section-desc">Nhập tên món ăn và khối lượng để xem chi tiết thành phần dinh dưỡng</p>
+
+      <div class="search-card">
+        <div class="search-fields">
+          <div class="field-group">
+            <label class="field-label" for="food-input">🍽️ Tên món ăn</label>
+            <input
+              type="text"
+              id="food-input"
+              class="field-input"
+              placeholder="Ví dụ: Táo, Phở bò, Rice..."
+              autocomplete="off"
+            />
+          </div>
+          <div class="field-group field-weight">
+            <label class="field-label" for="weight-input">⚖️ Khối lượng</label>
+            <div class="weight-input-wrap">
+              <input
+                type="number"
+                id="weight-input"
+                class="field-input"
+                placeholder="200"
+                min="1"
+                max="9999"
+                value="100"
+              />
+              <span class="weight-unit">gram</span>
+            </div>
+          </div>
+        </div>
+        <button class="search-btn" id="search-btn" onclick="handleSearch()">
+          <span class="btn-text">Tra cứu</span>
+          <span class="btn-icon">→</span>
+        </button>
+      </div>
+
+      <div class="error-box" id="error-box" hidden>
+        <span class="error-icon">⚠️</span>
+        <span id="error-message">Không tìm thấy món ăn.</span>
+      </div>
+    </section>
+
+    <!-- RESULT SECTION -->
+    <section class="result-section" id="result-section" hidden>
+      <div class="section-label">Kết quả</div>
+      <h2 class="section-title" id="result-food-name">—</h2>
+
+      <div class="result-layout">
+        <!-- Ring chart -->
+        <div class="ring-wrap">
+          <svg class="ring-svg" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+            <circle class="ring-bg" cx="90" cy="90" r="70" />
+            <circle class="ring-carb"  id="ring-carb"    cx="90" cy="90" r="70" />
+            <circle class="ring-fat"   id="ring-fat"     cx="90" cy="90" r="70" />
+            <circle class="ring-protein" id="ring-protein" cx="90" cy="90" r="70" />
+          </svg>
+          <div class="ring-center">
+            <span class="ring-cal" id="ring-cal">—</span>
+            <span class="ring-cal-label">kcal</span>
+          </div>
+        </div>
+
+        <!-- Macro cards -->
+        <div class="macro-grid">
+          <div class="macro-card macro-protein">
+            <div class="macro-dot"></div>
+            <div class="macro-value" id="macro-protein">—</div>
+            <div class="macro-unit">gram</div>
+            <div class="macro-name">Protein</div>
+          </div>
+          <div class="macro-card macro-fat">
+            <div class="macro-dot"></div>
+            <div class="macro-value" id="macro-fat">—</div>
+            <div class="macro-unit">gram</div>
+            <div class="macro-name">Chất béo</div>
+          </div>
+          <div class="macro-card macro-carb">
+            <div class="macro-dot"></div>
+            <div class="macro-value" id="macro-carb">—</div>
+            <div class="macro-unit">gram</div>
+            <div class="macro-name">Carbohydrates</div>
+          </div>
+          <div class="macro-card macro-weight">
+            <div class="macro-dot"></div>
+            <div class="macro-value" id="macro-weight">—</div>
+            <div class="macro-unit">gram</div>
+            <div class="macro-name">Khối lượng</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item"><span class="legend-dot protein-dot"></span>Protein</div>
+        <div class="legend-item"><span class="legend-dot fat-dot"></span>Chất béo</div>
+        <div class="legend-item"><span class="legend-dot carb-dot"></span>Carbohydrates</div>
+      </div>
+    </section>
+
+    <!-- POPULAR FOODS SECTION -->
+    <section class="popular-section">
+      <div class="section-label">Khám phá</div>
+      <h2 class="section-title">Món ăn phổ biến</h2>
+      <p class="section-desc">Nhấn vào một món để tra cứu nhanh dinh dưỡng</p>
+      <div class="popular-grid" id="popular-grid">
+        <!-- cards injected by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LOADING OVERLAY -->
+  <div class="loading-overlay" id="loading-overlay" hidden>
+    <div class="spinner-wrap">
+      <div class="spinner"></div>
+      <p class="loading-text" id="loading-text">Đang tìm kiếm...</p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>Nutrition Calculator · Microservices Architecture · Food Service :8001 · Nutrition Service :8002</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

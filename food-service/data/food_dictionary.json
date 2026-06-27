@@ -1,0 +1,181 @@
+[
+    {
+        "displayName": "Táo",
+        "query": "apple",
+        "aliases": ["táo", "tao", "apple"],
+        "category": "Fruit"
+    },
+    {
+        "displayName": "Chuối",
+        "query": "banana",
+        "aliases": ["chuối", "chuoi", "banana"],
+        "category": "Fruit"
+    },
+    {
+        "displayName": "Cam",
+        "query": "orange",
+        "aliases": ["cam", "orange"],
+        "category": "Fruit"
+    },
+    {
+        "displayName": "Xoài",
+        "query": "mango",
+        "aliases": ["xoài", "xoai", "mango"],
+        "category": "Fruit"
+    },
+    {
+        "displayName": "Dưa hấu",
+        "query": "watermelon",
+        "aliases": ["dưa hấu", "dua hau", "watermelon"],
+        "category": "Fruit"
+    },
+
+    {
+        "displayName": "Cơm trắng",
+        "query": "white rice",
+        "aliases": ["cơm", "com", "rice", "white rice"],
+        "category": "Staple Food"
+    },
+    {
+        "displayName": "Phở bò",
+        "query": "beef pho",
+        "aliases": ["phở", "pho", "phở bò", "beef pho"],
+        "category": "Vietnamese Food"
+    },
+    {
+        "displayName": "Bún bò Huế",
+        "query": "bun bo hue",
+        "aliases": ["bún bò huế", "bun bo hue"],
+        "category": "Vietnamese Food"
+    },
+    {
+        "displayName": "Bún chả",
+        "query": "bun cha",
+        "aliases": ["bún chả", "bun cha"],
+        "category": "Vietnamese Food"
+    },
+    {
+        "displayName": "Bánh mì",
+        "query": "banh mi",
+        "aliases": ["bánh mì", "banh mi"],
+        "category": "Vietnamese Food"
+    },
+    {
+        "displayName": "Cơm tấm",
+        "query": "broken rice",
+        "aliases": ["cơm tấm", "com tam"],
+        "category": "Vietnamese Food"
+    },
+    {
+        "displayName": "Hủ tiếu",
+        "query": "hu tieu",
+        "aliases": ["hủ tiếu", "hu tieu"],
+        "category": "Vietnamese Food"
+    },
+    {
+        "displayName": "Cháo",
+        "query": "congee",
+        "aliases": ["cháo", "chao", "congee"],
+        "category": "Vietnamese Food"
+    },
+    {
+        "displayName": "Bánh cuốn",
+        "query": "steamed rice rolls",
+        "aliases": ["bánh cuốn", "banh cuon"],
+        "category": "Vietnamese Food"
+    },
+
+    {
+        "displayName": "Pizza",
+        "query": "pizza",
+        "aliases": ["pizza"],
+        "category": "Fast Food"
+    },
+    {
+        "displayName": "Hamburger",
+        "query": "hamburger",
+        "aliases": ["hamburger", "burger"],
+        "category": "Fast Food"
+    },
+    {
+        "displayName": "Khoai tây chiên",
+        "query": "french fries",
+        "aliases": ["khoai tây chiên", "khoai tay chien", "fries"],
+        "category": "Fast Food"
+    },
+    {
+        "displayName": "Gà rán",
+        "query": "fried chicken",
+        "aliases": ["gà rán", "ga ran", "fried chicken"],
+        "category": "Fast Food"
+    },
+
+    {
+        "displayName": "Trứng gà",
+        "query": "egg",
+        "aliases": ["trứng", "trung ga", "egg"],
+        "category": "Protein"
+    },
+    {
+        "displayName": "Thịt bò",
+        "query": "beef",
+        "aliases": ["thịt bò", "thit bo", "beef"],
+        "category": "Protein"
+    },
+    {
+        "displayName": "Thịt gà",
+        "query": "chicken",
+        "aliases": ["thịt gà", "thit ga", "chicken"],
+        "category": "Protein"
+    },
+    {
+        "displayName": "Cá hồi",
+        "query": "salmon",
+        "aliases": ["cá hồi", "ca hoi", "salmon"],
+        "category": "Protein"
+    },
+
+    {
+        "displayName": "Sữa tươi",
+        "query": "milk",
+        "aliases": ["sữa", "sua tuoi", "milk"],
+        "category": "Drink"
+    },
+    {
+        "displayName": "Cà phê",
+        "query": "coffee",
+        "aliases": ["cà phê", "ca phe", "coffee"],
+        "category": "Drink"
+    },
+    {
+        "displayName": "Trà sữa",
+        "query": "milk tea",
+        "aliases": ["trà sữa", "tra sua", "milk tea"],
+        "category": "Drink"
+    },
+    {
+        "displayName": "Nước cam",
+        "query": "orange juice",
+        "aliases": ["nước cam", "nuoc cam", "orange juice"],
+        "category": "Drink"
+    },
+
+    {
+        "displayName": "Bánh ngọt",
+        "query": "cake",
+        "aliases": ["bánh ngọt", "banh ngot", "cake"],
+        "category": "Dessert"
+    },
+    {
+        "displayName": "Kem",
+        "query": "ice cream",
+        "aliases": ["kem", "ice cream"],
+        "category": "Dessert"
+    },
+    {
+        "displayName": "Bánh flan",
+        "query": "flan",
+        "aliases": ["bánh flan", "banh flan", "flan"],
+        "category": "Dessert"
+    }
+]
