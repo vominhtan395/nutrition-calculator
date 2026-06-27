@@ -19,8 +19,8 @@ async def fetch_nutrition_from_usda(query: str):
     params = {
         "api_key": USDA_API_KEY,
         "query": query,
-        "pageSize": 10,  # Lấy 10 kết quả đầu
-        "dataType": "Foundation,SR Legacy,Survey (FNDDS)" # Ưu tiên thực phẩm cơ bản
+        "pageSize": 10
+        # Đã loại bỏ dataType để USDA tìm kiếm toàn diện (tránh lỗi 400 Bad Request)
     }
 
     async with httpx.AsyncClient(timeout=15.0) as client:
@@ -29,7 +29,8 @@ async def fetch_nutrition_from_usda(query: str):
         if response.status_code == 429:
             raise Exception("USDA Rate Limit Exceeded (Quá giới hạn gọi API).")
         if response.status_code != 200:
-            raise Exception(f"USDA API Error: {response.status_code}")
+            # Ghi log chi tiết lỗi từ USDA để dễ debug
+            raise Exception(f"USDA API Error: {response.status_code} - {response.text}")
             
         data = response.json()
         foods = data.get("foods", [])
@@ -38,14 +39,13 @@ async def fetch_nutrition_from_usda(query: str):
             return None
 
         # --- YÊU CẦU 7: Chọn kết quả phù hợp nhất bằng Fuzzy Match ---
-        # USDA có thể trả về: "Apple raw", "Apple juice", "Apple pie".
-        # Ta cần chọn item có description giống với 'query' nhất.
+        # Lấy description của các thức ăn trả về
         choices = {food["fdcId"]: food["description"].lower() for food in foods}
         best_match = process.extractOne(query.lower(), choices, scorer=fuzz.token_sort_ratio)
         
-        best_food = foods[0] # Fallback lấy cái đầu tiên
+        best_food = foods[0] # Fallback lấy kết quả đầu tiên nếu fuzzy match thất bại
         if best_match and best_match[1] > 50: # Nếu độ tương đồng > 50%
-            matched_id = best_match[2] # key trong dict
+            matched_id = best_match[2] # fdcId nằm ở vị trí thứ 3 của tuple
             for f in foods:
                 if f["fdcId"] == matched_id:
                     best_food = f

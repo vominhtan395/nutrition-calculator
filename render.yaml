@@ -1,22 +1,39 @@
 services:
-  # 1. Food Service (Private Service - Chỉ chạy nội bộ)
+  # 1. Food Service (Private Service) - Dịch vụ xử lý thuật toán tiếng Việt
   - type: pserv
     name: food-service
     env: docker
     dockerfilePath: ./food-service/Dockerfile
     autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8001
+    # Bật Auto-scaling cho Food Service
+    scaling:
+      minInstances: 1
+      maxInstances: 10
+      targetCPUPercent: 60
+      targetMemoryPercent: 70
 
-  # 2. Nutrition Service (Private Service - Chỉ chạy nội bộ)
+  # 2. Nutrition Service (Private Service) - Dịch vụ kết nối USDA & Cache
   - type: pserv
     name: nutrition-service
     env: docker
     dockerfilePath: ./nutrition-service/Dockerfile
     autoDeploy: true
     envVars:
+      - key: PORT
+        value: 8002
       - key: USDA_API_KEY
-        sync: false # Báo Render rằng API Key sẽ được nhập thủ công trên Dashboard bảo mật
+        sync: false
+    # Bật Auto-scaling cho Nutrition Service
+    scaling:
+      minInstances: 1
+      maxInstances: 10
+      targetCPUPercent: 60
+      targetMemoryPercent: 70
 
-  # 3. Gateway Service (Web Service - Công khai ra ngoài)
+  # 3. Gateway Service (Web Service) - Cửa ngõ đón bão Request
   - type: web
     name: nutrition-gateway
     env: docker
@@ -27,3 +44,9 @@ services:
         value: http://food-service:8001
       - key: NUTRITION_SERVICE_URL
         value: http://nutrition-service:8002
+    # Bật Auto-scaling cho Gateway
+    scaling:
+      minInstances: 1
+      maxInstances: 10
+      targetCPUPercent: 60
+      targetMemoryPercent: 70
