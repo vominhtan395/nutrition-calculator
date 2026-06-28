@@ -1,5 +1,11 @@
 [
     {
+        "displayName": "Mì tôm",
+        "query": "instant noodles",
+        "aliases": ["mì tôm", "mi tom", "mì gói", "mi goi", "mì ăn liền", "mì", "mi", "gói mì", "tô mì"],
+        "category": "Noodle"
+    },
+    {
         "displayName": "Táo",
         "query": "apple raw",
         "aliases": ["táo", "tao", "apple", "quả táo", "trái táo", "táo đỏ", "táo xanh", "táo tây", "táo mĩ"],
@@ -44,7 +50,7 @@
     {
         "displayName": "Cơm trắng",
         "query": "cooked white rice",
-        "aliases": ["cơm", "com", "rice", "white rice", "cơm trắng", "cơm tẻ", "bát cơm", "chén cơm"],
+        "aliases": ["cơm", "com", "rice", "white rice", "cơm trắng", "cơm tẻ", "bát cơm", "chén cơm", "cơm không"],
         "category": "Staple Food"
     },
     {
@@ -56,13 +62,19 @@
     {
         "displayName": "Phở bò",
         "query": "beef pho noodle soup",
-        "aliases": ["phở", "pho", "phở bò", "beef pho", "phở tái", "phở nạm", "tô phở bò"],
+        "aliases": ["phở", "pho", "phở bò", "beef pho", "phở tái", "phở nạm", "tô phở bò", "tô phở", "phở nước"],
+        "category": "Vietnamese Food"
+    },
+    {
+        "displayName": "Phở gà",
+        "query": "chicken pho",
+        "aliases": ["phở gà", "pho ga", "tô phở gà"],
         "category": "Vietnamese Food"
     },
     {
         "displayName": "Bún bò Huế",
         "query": "spicy beef noodle soup hue style",
-        "aliases": ["bún bò huế", "bun bo hue", "bún bò", "bun bo", "tô bún bò"],
+        "aliases": ["bún bò huế", "bun bo hue", "bún bò", "bun bo", "tô bún bò", "bún", "bun"],
         "category": "Vietnamese Food"
     },
     {
@@ -80,13 +92,19 @@
     {
         "displayName": "Bánh mì",
         "query": "banh mi sandwich",
-        "aliases": ["bánh mì", "banh mi", "ổ bánh mì", "bánh mỳ", "bánh mì thịt", "bánh mì chả"],
+        "aliases": ["bánh mì", "banh mi", "ổ bánh mì", "bánh mỳ", "bánh mì thịt", "bánh mì chả", "bánh mì không"],
         "category": "Vietnamese Food"
     },
     {
         "displayName": "Cơm tấm",
         "query": "broken rice with grilled pork",
         "aliases": ["cơm tấm", "com tam", "cơm sườn", "com suon", "cơm tấm sườn bì chả"],
+        "category": "Vietnamese Food"
+    },
+    {
+        "displayName": "Xôi mặn",
+        "query": "sticky rice with meat",
+        "aliases": ["xôi", "xoi", "xôi mặn", "xôi mặn thập cẩm", "gói xôi", "hộp xôi"],
         "category": "Vietnamese Food"
     },
     {

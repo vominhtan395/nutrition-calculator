@@ -48,14 +48,14 @@ def search_food(name: str):
     # 2. Fuzzy match (Tìm xấp xỉ nếu gõ sai chính tả)
     choices = list(lookup_index.keys())
     # Lấy ra kết quả tốt nhất, score từ 0-100
-    best_match = process.extractOne(keyword_norm, choices, scorer=fuzz.WRatio)
+    best_match = process.extractOne(keyword_norm, choices, scorer=fuzz.ratio)
     
     # best_match có dạng (chuỗi_khớp, điểm_số, index)
     if best_match and best_match[1] >= 80: # Ngưỡng tự tin 80%
         matched_key = best_match[0]
         return extract_food_data(lookup_index[matched_key])
 
-    raise HTTPException(status_code=404, detail="Không tìm thấy món ăn trong từ điển")
+    raise HTTPException(status_code=404, detail="Vui lòng nhập tên món ăn đầy đủ và chính xác hơn.")
 
 @app.get("/foods/popular")
 def get_popular_foods():
